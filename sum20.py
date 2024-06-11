@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 dice = np.array([1, 5, 6, 8, 3, 7, 3, 5, 9, 0], dtype=np.int32)
 
@@ -46,7 +47,7 @@ def Select_appropriate(list_gen):
   return two_genlist
 
 #유전자 객체 교차 구현하기
-def Intersect_genorm(list_gen, state):
+def Intersect_genome(list_gen, state):
   temp_list = np.array([])
   for gen in list_gen:
     value = gen[state]
@@ -64,7 +65,7 @@ def Combine_genome(list_1, list_2):
 
 # 주사위 숫자가 5일 때 돌연변이 일으키기
 # 돌연변이를 일으킬 위치(인덱스 0, 1, 2)를 랜덤하게 생성
-def Mutation(list_gen, prob=0.2):
+def Mutation(list_gen, prob=0.1):
   mutant_list = list_gen.copy()
   event = np.random.choice((0, 1), p=[1-prob, prob])
   if event == True :
@@ -74,13 +75,88 @@ def Mutation(list_gen, prob=0.2):
       mutant[mutant_state[0]] = mutant_dice[0]
   return mutant_list
 
-def Fit(genlist_four, epochs):
+def Fit(genlist_four, epochs, prob=0.1, period=None):
     for epoch in range(epochs):
         genlist_two= Select_appropriate(genlist_four)
         change_num = np.random.choice(3, 1)
-        intersect_gen = Intersect_genorm(genlist_two, change_num[0]) 
-        intersect_gen = Mutation(intersect_gen)
+        intersect_gen = Intersect_genome(genlist_two, change_num[0]) 
+        intersect_gen = Mutation(intersect_gen, prob)
         genlist_four = Combine_genome(genlist_two, intersect_gen) 
+        # period 매개변수에 따라 epoch 출력
+        if period is not None and (epoch + 1) % period == 0:
+            appr = Appropriate(genlist_four)
+            print(f"Epoch: {epoch + 1}, Appropriate: {appr}")
+            Display_genome(genlist_four, appr=appr, epoch=epoch+1)
     print('Complete!')    
     return genlist_four
     
+def Display_genome(genome, appr=None, epoch = None):
+    # 유전자 값을 세로 막대 그래프로 표현
+    if genome.ndim == 1:  # 1개의 유전자 입력
+        plt.figure(figsize=(2, 4))
+        
+        # 파스텔 톤의 RGB 색상 사용
+        red = (1, 0.7, 0.7)
+        green = (0.7, 1, 0.7)
+        blue = (0.7, 0.7, 1)
+        
+        # 각 유전자를 다른 색상의 겹쳐진 막대로 표현
+        gene1, gene2, gene3 = genome
+        
+        # 세로 축 최대 높이를 20으로 설정
+        plt.ylim(0, 20)
+        
+        plt.bar(0, gene1, color=red, width=0.5)
+        plt.bar(0, gene2, bottom=gene1, color=green, width=0.5)
+        plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
+        
+        # 각 유전자 값을 텍스트로 표시
+        plt.text(0.06, gene1/2, f"{gene1:.2f}", va='center', ha='right', color='k')
+        plt.text(0.06, gene1+gene2/2, f"{gene2:.2f}", va='center', ha='right', color='k')
+        plt.text(0.06, gene1+gene2+gene3/2, f"{gene3:.2f}", va='center', ha='right', color='k')
+        
+        
+        plt.xticks([])
+        plt.yticks([0, 5, 10, 15, 20])
+        if appr is not None:
+            plt.text(-0.23, -1, f"Appropriate: {appr[0]}", va='top', ha='left', color='k')
+        if epoch is not None:
+            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
+        plt.show()
+    else:  # 4개의 유전자 입력
+        plt.figure(figsize=(8, 4))
+        
+        # 파스텔 톤의 RGB 색상 사용
+        red = (1, 0.7, 0.7)
+        green = (0.7, 1, 0.7)
+        blue = (0.7, 0.7, 1)
+        
+        # 4개의 유전자를 subplot으로 표현
+        for i, genes in enumerate(genome):
+            plt.subplot(1, 4, i+1)
+            
+            gene1, gene2, gene3 = genes
+            
+            # 세로 축 최대 높이를 20으로 설정
+            plt.ylim(0, 20)
+            
+            plt.bar(0, gene1, color=red, width=0.5)
+            plt.bar(0, gene2, bottom=gene1, color=green, width=0.5)
+            plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
+            
+            # 각 유전자 값을 텍스트로 표시
+            plt.text(0.06, gene1/2, f"{gene1:.2f}", va='center', ha='right', color='k')
+            plt.text(0.06, gene1+gene2/2, f"{gene2:.2f}", va='center', ha='right', color='k')
+            plt.text(0.06, gene1+gene2+gene3/2, f"{gene3:.2f}", va='center', ha='right', color='k')
+            
+            plt.xticks([])
+            plt.yticks([0, 5, 10, 15, 20])
+        if appr is not None:
+            for j in range(4):
+                plt.subplot(1, 4, j+1)
+                plt.text(-0.23, -1, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
+        if epoch is not None:
+            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
+            
+        plt.tight_layout()
+        plt.show()

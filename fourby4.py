@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.pyplot as plt
 
 # (4, 4)의 유전 객체 생성
 def Create_genome():
@@ -63,13 +64,48 @@ def Mutation(list_gen, prob=0.1):
 def Combine_genome(list_1, list_2):
   return np.concatenate((list_1, list_2))
 
-def Fit(genlist_four, target, epochs, prob=0.1):
+def Fit(genlist_four, target, epochs, prob=0.1, period=None):
     for epoch in range(epochs):
         genlist_two= Select_appropriate(genlist_four, target)
         intersect_gen = Intersect_genorm(genlist_two) 
         intersect_gen = Mutation(intersect_gen, prob=0.1)
         genlist_four = Combine_genome(genlist_two, intersect_gen) 
+        
+        # period 매개변수에 따라 epoch 출력
+        if period is not None and (epoch + 1) % period == 0:
+            appr = Appropriate(genlist_four, target)
+            print(f"Epoch: {epoch + 1}, Appropriate: {appr}")
+            Display_image(genlist_four, appr, epoch+1)
     print('Complete!')    
     return genlist_four
     
-
+# 이미지 출력 기능
+def Display_image(image, appr=None, epoch=None):
+    if image.shape == (4, 4):
+        # (4, 4) 이미지가 입력되는 경우
+        plt.figure(figsize=(4, 4))
+        plt.xticks(np.arange(0, 4, 1))
+        plt.yticks(np.arange(0, 4, 1))
+        plt.imshow(image, cmap='gray')
+        if epoch is not None:
+            plt.title(f"Epochs: {epoch}", fontsize=16, loc='center')
+        if appr is not None:
+            plt.text(0.5, -0.2, f"Appropriate: {appr[0]}", ha='center', transform=plt.gca().transAxes)
+        plt.show()
+    elif image.shape == (4, 4, 4):
+        # (4, 4, 4) 이미지가 입력되는 경우
+        plt.figure(figsize=(12, 6))
+        for i in range(4):
+            plt.subplot(1, 4, i+1)
+            plt.xticks(np.arange(0, 4, 1))
+            plt.yticks(np.arange(0, 4, 1))
+            plt.imshow(image[i], cmap='gray')
+        if epoch is not None:
+            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 0.75))
+        if appr is not None:
+            for j in range(4):
+                plt.subplot(1, 4, j+1)
+                plt.text(0.5, -0.2, f"Appropriate: {appr[j]}", ha='center', transform=plt.gca().transAxes)
+        plt.show()
+    else:
+        print("입력 이미지의 형태가 올바르지 않습니다.")
