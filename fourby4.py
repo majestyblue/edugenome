@@ -36,7 +36,7 @@ def Select_appropriate(list_gen, target):
 # 감수 분열을 이용한 교차 구현
 # 감수 분열을 하면 행 1-2(인덱스 0, 1) , 행 3-4(인덱스 2, 3)로 분열된다. 
 # 서로 교차할 물질은 행 3-4번 끼리 서로 교체함.
-def Intersect_genorm(list_gen):
+def Intersect_genome(list_gen):
   temp_list = np.vstack((list_gen[0][2:4], list_gen[1][2:4]))
   copy_list = list_gen.copy()
   copy_list[0][2:4] = temp_list[2:4]
