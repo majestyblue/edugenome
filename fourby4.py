@@ -67,7 +67,7 @@ def Combine_genome(list_1, list_2):
 def Fit(genlist_four, target, epochs, prob=0.1, period=None):
     for epoch in range(epochs):
         genlist_two= Select_appropriate(genlist_four, target)
-        intersect_gen = Intersect_genorm(genlist_two) 
+        intersect_gen = Intersect_genome(genlist_two) 
         intersect_gen = Mutation(intersect_gen, prob=0.1)
         genlist_four = Combine_genome(genlist_two, intersect_gen) 
         
@@ -81,31 +81,24 @@ def Fit(genlist_four, target, epochs, prob=0.1, period=None):
     
 # 이미지 출력 기능
 def Display_image(image, appr=None, epoch=None):
-    if image.shape == (4, 4):
-        # (4, 4) 이미지가 입력되는 경우
-        plt.figure(figsize=(4, 4))
+    
+    # 이미지가 3차원이 아니라면 (1개라면), 3차원으로 수정
+    if image.ndim != 3:
+        image = np.expand_dims(image, axis=0)
+    
+    # 이미지 개수 계산
+    num_image = image.shape[0]
+    
+    plt.figure(figsize=(3*num_image, 6))
+    for i in range(num_image):
+        plt.subplot(1, num_image, i+1)
         plt.xticks(np.arange(0, 4, 1))
         plt.yticks(np.arange(0, 4, 1))
-        plt.imshow(image, cmap='gray')
-        if epoch is not None:
-            plt.title(f"Epochs: {epoch}", fontsize=16, loc='center')
-        if appr is not None:
-            plt.text(0.5, -0.2, f"Appropriate: {appr[0]}", ha='center', transform=plt.gca().transAxes)
-        plt.show()
-    elif image.shape == (4, 4, 4):
-        # (4, 4, 4) 이미지가 입력되는 경우
-        plt.figure(figsize=(12, 6))
-        for i in range(4):
-            plt.subplot(1, 4, i+1)
-            plt.xticks(np.arange(0, 4, 1))
-            plt.yticks(np.arange(0, 4, 1))
-            plt.imshow(image[i], cmap='gray')
-        if epoch is not None:
-            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 0.75))
-        if appr is not None:
-            for j in range(4):
-                plt.subplot(1, 4, j+1)
-                plt.text(0.5, -0.2, f"Appropriate: {appr[j]}", ha='center', transform=plt.gca().transAxes)
-        plt.show()
-    else:
-        print("입력 이미지의 형태가 올바르지 않습니다.")
+        plt.imshow(image[i], cmap='gray')
+    if epoch is not None:
+        plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 0.75))
+    if appr is not None:
+        for j in range(num_image):
+            plt.subplot(1, num_image, j+1)
+            plt.text(0.5, -0.2, f"Appropriate: {appr[j]}", ha='center', transform=plt.gca().transAxes)
+    plt.show()

@@ -1,5 +1,3 @@
-# 수정사항, Display_genome 함수에서 왜 target이 안되는 것인가
-
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,72 +89,46 @@ def Fit(genlist_four, x, y, epochs, prob=0.1, period=None):
     return genlist_four
 
 def Display_genome(genome, target, appr=None, epoch = None):
+    if genome.ndim != 2:
+        genome = np.expand_dims(genome, axis=0)
+    
+    # genome 갯수 계산
+    num_genome = genome.shape[0]
+    
     # 유전자 값을 세로 막대 그래프로 표현
-    if genome.ndim == 1:  # 1개의 유전자 입력
-        plt.figure(figsize=(2, 4))
+    plt.figure(figsize=(2*num_genome, 4))
         
-        # 파스텔 톤의 RGB 색상 사용
-        green = (0.8, 0.9, 0.8)  # 연한 녹색
-        violet = (0.9, 0.8, 0.9)  # 연한 보라색
-        blue = (0.8, 0.8, 0.9)  # 연한 파란색
+    # 파스텔 톤의 RGB 색상 사용
+    green = (0.8, 0.9, 0.8)  # 연한 녹색
+    violet = (0.9, 0.8, 0.9)  # 연한 보라색
+    blue = (0.8, 0.8, 0.9)  # 연한 파란색
         
-        # 각 유전자를 다른 색상의 겹쳐진 막대로 표현
-        gene1, gene2, gene3 = genome
-        
+    # 4개의 유전자를 subplot으로 표현
+    for i, genes in enumerate(genome):
+        plt.subplot(1, num_genome, i+1)
+            
+        gene1, gene2, gene3 = genes
+            
         # 세로 축 최대 높이를 20으로 설정
         plt.ylim(0, 20)
-        
+            
         plt.bar(0, gene1, color=green, width=0.5)
         plt.bar(0, gene2, bottom=gene1, color=violet, width=0.5)
         plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
-        
+            
         # 각 유전자 값을 텍스트로 표시
         plt.text(0.15, gene1/2, f"w1x1: {gene1:.2f}", va='center', ha='right', color='k')
         plt.text(0.15, gene1+gene2/2, f"w2x2: {gene2:.2f}", va='center', ha='right', color='k')
         plt.text(0.06, gene1+gene2+gene3/2, f"b: {gene3:.2f}", va='center', ha='right', color='k')
-        
-        
+            
         plt.xticks([])
         plt.yticks([0, target])
-        if appr is not None:
-            plt.text(-0.23, -1, f"Appropriate: {appr[0]}", va='top', ha='left', color='k')
-        if epoch is not None:
-            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
-        plt.show()
-    else:  # 4개의 유전자 입력
-        plt.figure(figsize=(8, 4))
-        
-        # 파스텔 톤의 RGB 색상 사용
-        green = (0.8, 0.9, 0.8)  # 연한 녹색
-        violet = (0.9, 0.8, 0.9)  # 연한 보라색
-        blue = (0.8, 0.8, 0.9)  # 연한 파란색
-        
-        # 4개의 유전자를 subplot으로 표현
-        for i, genes in enumerate(genome):
-            plt.subplot(1, 4, i+1)
+    if appr is not None:
+        for j in range(num_genome):
+            plt.subplot(1, num_genome, j+1)
+            plt.text(-0.23, -1, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
+    if epoch is not None:
+        plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
             
-            gene1, gene2, gene3 = genes
-            
-            # 세로 축 최대 높이를 20으로 설정
-            plt.ylim(0, 20)
-            
-            plt.bar(0, gene1, color=green, width=0.5)
-            plt.bar(0, gene2, bottom=gene1, color=violet, width=0.5)
-            plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
-            
-            # 각 유전자 값을 텍스트로 표시
-            plt.text(0.15, gene1/2, f"w1x1: {gene1:.2f}", va='center', ha='right', color='k')
-            plt.text(0.15, gene1+gene2/2, f"w2x2: {gene2:.2f}", va='center', ha='right', color='k')
-            plt.text(0.06, gene1+gene2+gene3/2, f"b: {gene3:.2f}", va='center', ha='right', color='k')
-            
-            plt.xticks([])
-            plt.yticks([0, target])
-        if appr is not None:
-            for j in range(4):
-                plt.subplot(1, 4, j+1)
-                plt.text(-0.23, -1, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
-        if epoch is not None:
-            plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
-            
-        plt.tight_layout()
-        plt.show()
+    plt.tight_layout()
+    plt.show()
