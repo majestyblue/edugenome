@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-dice = np.array([1, 5, 6, 8, 3, 7, 3, 5, 9, 0], dtype=np.int32)
+dice = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=np.int32)
 
 #주사위 던지기 -> np.array 1_dimension
 def Throw_dice():
