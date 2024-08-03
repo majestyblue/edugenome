@@ -74,7 +74,7 @@ def Fit(genlist_four, target, epochs, prob=0.1, period=None):
         # period 매개변수에 따라 epoch 출력
         if period is not None and (epoch + 1) % period == 0:
             appr = Appropriate(genlist_four, target)
-            print(f"Epoch: {epoch + 1}, Appropriate: {appr}")
+            print(f"Generation: {epoch + 1}, Appropriate: {appr}")
             Display_image(genlist_four, appr, epoch+1)
     print('Complete!')    
     return genlist_four
@@ -96,7 +96,7 @@ def Display_image(image, appr=None, epoch=None):
         plt.yticks(np.arange(0, 4, 1))
         plt.imshow(image[i], cmap='gray')
     if epoch is not None:
-        plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 0.75))
+        plt.suptitle(f"Generation: {epoch}", fontsize=16, position = (0.5, 0.75))
     if appr is not None:
         for j in range(num_image):
             plt.subplot(1, num_image, j+1)

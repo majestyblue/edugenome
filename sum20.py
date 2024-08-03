@@ -85,7 +85,7 @@ def Fit(genlist_four, epochs, prob=0.1, period=None):
         # period 매개변수에 따라 epoch 출력
         if period is not None and (epoch + 1) % period == 0:
             appr = Appropriate(genlist_four)
-            print(f"Epoch: {epoch + 1}, Appropriate: {appr}")
+            print(f"Generation: {epoch + 1}, Appropriate: {appr}")
             Display_genome(genlist_four, appr=appr, epoch=epoch+1)
     print('Complete!')    
     return genlist_four
@@ -130,7 +130,7 @@ def Display_genome(genome, appr=None, epoch = None):
             plt.text(-0.23, -1, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')
 
     if epoch is not None:
-        plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
+        plt.suptitle(f"Generation: {epoch}", fontsize=16, position = (0.5, 1))
             
     plt.tight_layout()
     plt.show()

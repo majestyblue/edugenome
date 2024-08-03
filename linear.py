@@ -83,7 +83,7 @@ def Fit(genlist_four, x, y, epochs, prob=0.1, period=None):
         # period 매개변수에 따라 epoch 출력
         if period is not None and (epoch + 1) % period == 0:
             appr = Appropriate(genlist_four, x, y)
-            print(f"Epoch: {epoch + 1}, Appropriate: {appr}")
+            print(f"Generation: {epoch + 1}, Appropriate: {appr}")
             Display_genome(genlist_four, target=y, appr=appr, epoch=epoch+1)
     print('Complete!')
     return genlist_four
@@ -117,12 +117,10 @@ def Display_genome(genome, target, appr=None, epoch = None):
         plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
             
         # 각 유전자 값을 텍스트로 표시
-        plt.text(0.15, gene1/2, f"w1x1: {gene1:.2f}", va='center', ha='right', color='k')
-        plt.text(0.15, gene1+gene2/2, f"w2x2: {gene2:.2f}", va='center', ha='right', color='k')
+        plt.text(0.15, gene1/2, f"w1{gene1:.2f}", va='center', ha='right', color='k')
+        plt.text(0.15, gene1+gene2/2, f"w2: {gene2:.2f}", va='center', ha='right', color='k')
         plt.text(0.06, gene1+gene2+gene3/2, f"b: {gene3:.2f}", va='center', ha='right', color='k')
             
-        plt.xticks([])
-        plt.yticks([0, target])
     if appr is not None:
         for j in range(num_genome):
             plt.subplot(1, num_genome, j+1)
