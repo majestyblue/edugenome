@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.pyplot as plt
 
 # (4, 4)의 유전 객체 생성
 def Create_genome():
@@ -35,7 +36,7 @@ def Select_appropriate(list_gen, target):
 # 감수 분열을 이용한 교차 구현
 # 감수 분열을 하면 행 1-2(인덱스 0, 1) , 행 3-4(인덱스 2, 3)로 분열된다. 
 # 서로 교차할 물질은 행 3-4번 끼리 서로 교체함.
-def Intersect_genorm(list_gen):
+def Intersect_genome(list_gen):
   temp_list = np.vstack((list_gen[0][2:4], list_gen[1][2:4]))
   copy_list = list_gen.copy()
   copy_list[0][2:4] = temp_list[2:4]
@@ -63,13 +64,41 @@ def Mutation(list_gen, prob=0.1):
 def Combine_genome(list_1, list_2):
   return np.concatenate((list_1, list_2))
 
-def Fit(genlist_four, target, epochs, prob=0.1):
+def Fit(genlist_four, target, epochs, prob=0.1, period=None):
     for epoch in range(epochs):
         genlist_two= Select_appropriate(genlist_four, target)
-        intersect_gen = Intersect_genorm(genlist_two) 
+        intersect_gen = Intersect_genome(genlist_two) 
         intersect_gen = Mutation(intersect_gen, prob=0.1)
         genlist_four = Combine_genome(genlist_two, intersect_gen) 
+        
+        # period 매개변수에 따라 epoch 출력
+        if period is not None and (epoch + 1) % period == 0:
+            appr = Appropriate(genlist_four, target)
+            print(f"Generation: {epoch + 1}, Appropriate: {appr}")
+            Display_image(genlist_four, appr, epoch+1)
     print('Complete!')    
     return genlist_four
     
-
+# 이미지 출력 기능
+def Display_image(image, appr=None, epoch=None):
+    
+    # 이미지가 3차원이 아니라면 (1개라면), 3차원으로 수정
+    if image.ndim != 3:
+        image = np.expand_dims(image, axis=0)
+    
+    # 이미지 개수 계산
+    num_image = image.shape[0]
+    
+    plt.figure(figsize=(3*num_image, 6))
+    for i in range(num_image):
+        plt.subplot(1, num_image, i+1)
+        plt.xticks(np.arange(0, 4, 1))
+        plt.yticks(np.arange(0, 4, 1))
+        plt.imshow(image[i], cmap='gray')
+    if epoch is not None:
+        plt.suptitle(f"Generation: {epoch}", fontsize=16, position = (0.5, 0.75))
+    if appr is not None:
+        for j in range(num_image):
+            plt.subplot(1, num_image, j+1)
+            plt.text(0.5, -0.2, f"Appropriate: {appr[j]}", ha='center', transform=plt.gca().transAxes)
+    plt.show()
