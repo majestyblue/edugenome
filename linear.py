@@ -128,7 +128,7 @@ def Display_genome(genome, target, appr=None, epoch = None):
             plt.subplot(1, num_genome, j+1)
             plt.text(-0.23, -3, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
     if epoch is not None:
-        plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
+        plt.suptitle(f"Generation: {epoch}", fontsize=16, position = (0.5, 1))
             
     plt.tight_layout()
     plt.show()
