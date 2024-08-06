@@ -15,6 +15,7 @@ def Create_4genome(sigma=1, mu=1):
         value = Create_genome(sigma, mu)
         gen_list = np.concatenate([gen_list, value], axis=0)
     gen_list = np.reshape(gen_list, (-1, 3))
+    gen_list = np.round(gen_list, 2)
     return gen_list
 
 # 적합도 계산 : |target - x_1w_1 + x_2w_2 + b|
@@ -24,8 +25,8 @@ def Appropriate(list_gen, x, y):
     w = gen[:2]
     b = gen[2]
     appro = np.array([np.abs(y - np.sum(x@w + b))])
-    appro = np.round(appro, 2)
     appro_list = np.concatenate([appro_list, appro], axis=0)
+  appro_list = np.round(appro_list, 2)  
   return appro_list
 
 # 개체 중 적합도가 가장 작은 2개의 객체 선택하기
@@ -61,6 +62,7 @@ def Mutation(list_gen, prob=0.1):
     mutant_list = np.array([])
     for i in range(2):
       value = Create_genome()
+      value = np.round(value, 2)
       mutant_list = np.concatenate([mutant_list, value], axis=0)
     
     mutant_list = np.reshape(mutant_list, (-1, 3))
@@ -117,14 +119,14 @@ def Display_genome(genome, target, appr=None, epoch = None):
         plt.bar(0, gene3, bottom=gene1+gene2, color=blue, width=0.5)
             
         # 각 유전자 값을 텍스트로 표시
-        plt.text(0.15, gene1/2, f"w1{gene1:.2f}", va='center', ha='right', color='k')
+        plt.text(0.15, gene1/2, f"w1: {gene1:.2f}", va='center', ha='right', color='k')
         plt.text(0.15, gene1+gene2/2, f"w2: {gene2:.2f}", va='center', ha='right', color='k')
         plt.text(0.06, gene1+gene2+gene3/2, f"b: {gene3:.2f}", va='center', ha='right', color='k')
             
     if appr is not None:
         for j in range(num_genome):
             plt.subplot(1, num_genome, j+1)
-            plt.text(-0.23, -1, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
+            plt.text(-0.23, -3, f"Appropriate: {appr[j]}", va='top', ha='left', color='k')    
     if epoch is not None:
         plt.suptitle(f"Epochs: {epoch}", fontsize=16, position = (0.5, 1))
             
